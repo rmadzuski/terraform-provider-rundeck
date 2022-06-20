@@ -744,18 +744,16 @@ func jobFromResourceData(d *schema.ResourceData) (*JobDetail, error) {
 
 				// Webhook notification
 				webHookUrls := notificationMap["webhook_urls"].([]interface{})
-				webhookHttpMethod := notificationMap["webhook_http_method"].(string)
-				webhookFormat := notificationMap["webhook_format"].(string)
 				if len(webHookUrls) > 0 {
 					webHook := &WebHookNotification{
-						Urls:       NotificationUrls([]string{}),
-						HttpMethod: webhookHttpMethod,
-						Format:     webhookFormat,
+						Urls: NotificationUrls([]string{}),
 					}
 					for _, iv := range webHookUrls {
 						webHook.Urls = append(webHook.Urls, iv.(string))
 					}
 					notification.WebHook = webHook
+					notification.Format = notificationMap["webhook_format"].(string)
+					notification.HttpMethod = notificationMap["webhook_http_method"].(string)
 				}
 
 				// plugin Notification
@@ -1235,8 +1233,8 @@ func readNotification(notification *Notification, notificationType string) map[s
 	}
 	if notification.WebHook != nil {
 		notificationConfigI["webhook_urls"] = notification.WebHook.Urls
-		notificationConfigI["webhook_http_method"] = notification.WebHook.HttpMethod
-		notificationConfigI["webhook_format"] = notification.WebHook.Format
+		notificationConfigI["webhook_http_method"] = notification.HttpMethod
+		notificationConfigI["webhook_format"] = notification.Format
 	}
 	if notification.Email != nil {
 		notificationConfigI["email"] = []interface{}{
