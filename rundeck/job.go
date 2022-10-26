@@ -183,6 +183,11 @@ type JobOption struct {
 	// If set, Rundeck requires a value to be set for this option.
 	IsRequired bool `xml:"required,attr,omitempty"`
 
+	// If set, Rundeck will treat this field as a date/time object
+	IsDate bool `xml:"isDate,omitempty"`
+	// If set, Rundeck will use this date/time format (as described: http://momentjs.com/docs/#/displaying/format/)
+	DateFormat string `xml:"dateFormat,omitempty"`
+
 	// If set, the input for this field will be obscured in the UI. Useful for passwords
 	// and other secrets.
 	ObscureInput bool `xml:"secure,attr,omitempty"`

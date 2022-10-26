@@ -281,6 +281,17 @@ func resourceRundeckJob() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+
+						"is_date": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+
+						"date_format": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Example: 'MM/DD/YYYY hh:mm a'. Should be as per momentjs",
+						},
 					},
 				},
 			},
@@ -683,12 +694,17 @@ func jobFromResourceData(d *schema.ResourceData) (*JobDetail, error) {
 				ObscureInput:            optionMap["obscure_input"].(bool),
 				ValueIsExposedToScripts: optionMap["exposed_to_scripts"].(bool),
 				StoragePath:             optionMap["storage_path"].(string),
+				IsDate:                  optionMap["is_date"].(bool),
+				DateFormat:              optionMap["date_format"].(string),
 			}
 			if option.StoragePath != "" && option.ObscureInput == false {
 				return nil, fmt.Errorf("argument \"obscure_input\" must be set to `true` when \"storage_path\" is not empty")
 			}
 			if option.ValueIsExposedToScripts && option.ObscureInput == false {
 				return nil, fmt.Errorf("argument \"obscure_input\" must be set to `true` when \"exposed_to_scripts\" is set to true")
+			}
+			if option.IsDate && option.DateFormat == "" {
+				return nil, fmt.Errorf("if \"is_data\" is set, you must set \"date_format\" (in momentjs)")
 			}
 
 			for _, iv := range optionMap["value_choices"].([]interface{}) {
