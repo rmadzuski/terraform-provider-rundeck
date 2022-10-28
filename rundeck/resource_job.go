@@ -292,6 +292,14 @@ func resourceRundeckJob() *schema.Resource {
 							Optional:    true,
 							Description: "Example: 'MM/DD/YYYY hh:mm a'. Should be as per momentjs",
 						},
+						"hidden": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+						"multivalue_all_selected": {
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -696,6 +704,8 @@ func jobFromResourceData(d *schema.ResourceData) (*JobDetail, error) {
 				StoragePath:             optionMap["storage_path"].(string),
 				IsDate:                  optionMap["is_date"].(bool),
 				DateFormat:              optionMap["date_format"].(string),
+				Hidden:                  optionMap["hidden"].(bool),
+				MultiValueAllSelected:   optionMap["multivalue_all_selected"].(bool),
 			}
 			if option.StoragePath != "" && option.ObscureInput == false {
 				return nil, fmt.Errorf("argument \"obscure_input\" must be set to `true` when \"storage_path\" is not empty")
@@ -932,6 +942,8 @@ func jobToResourceData(job *JobDetail, d *schema.ResourceData) error {
 				"obscure_input":             option.ObscureInput,
 				"exposed_to_scripts":        option.ValueIsExposedToScripts,
 				"storage_path":              option.StoragePath,
+				"hidden":                    option.Hidden,
+				"multivalue_all_selected":   option.MultiValueAllSelected,
 			}
 			optionConfigsI = append(optionConfigsI, optionConfigI)
 		}
